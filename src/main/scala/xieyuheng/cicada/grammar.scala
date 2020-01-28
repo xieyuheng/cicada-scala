@@ -101,8 +101,8 @@ object grammar {
         "fn_case" -> { case List(_, fn_case_clause_list, _) =>
           FnCase(non_empty_list_matcher(fn_case_clause_matcher)(fn_case_clause_list)) },
         "ap" -> { case List(target, _, arg_entry_list, _) =>
-          val arg_list = non_empty_list_matcher(arg_entry_matcher)(arg_entry_list)
-          Ap(exp_matcher(target), arg_list) },
+          val args = non_empty_list_matcher(arg_entry_matcher)(arg_entry_list)
+          Ap(exp_matcher(target), args) },
         "cl" -> { case List(_, _, given_entry_list, _) =>
           val type_map = ListMap(non_empty_list_matcher(given_entry_matcher)(given_entry_list): _*)
           Cl(ListMap.empty, type_map) },
@@ -130,8 +130,8 @@ object grammar {
           Obj(ListMap.empty) },
         "obj_naked_empty" -> { case List(_, _) =>
           Obj(ListMap()) },
-        "dot" -> { case List(target, _, Leaf(field)) =>
-          Dot(exp_matcher(target), field.word) },
+        "dot" -> { case List(target, _, Leaf(field_name)) =>
+          Dot(exp_matcher(target), field_name.word) },
         "block" -> { case List(_, block_entry_list, body, _) =>
           val block_entry_map = ListMap(non_empty_list_matcher(block_entry_matcher)(block_entry_list): _*)
           Block(block_entry_map, exp_matcher(body)) },

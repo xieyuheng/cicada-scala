@@ -2,7 +2,7 @@ package xieyuheng.cicada
 
 import collection.immutable.ListMap
 
-import eval._
+import evaluate._
 
 object readback {
 
@@ -22,22 +22,22 @@ object readback {
         var telescope_env = telescope.env
         telescope.type_map.foreach {
           case (name, t) =>
-            val t_value = eval(telescope_env, t)
+            val t_value = evaluate(telescope_env, t)
             telescope_env = telescope_env.ext(name, t_value, NeutralVar(name))
             type_map = type_map + (name -> readback(t_value))
         }
-        Pi(type_map, readback(eval(telescope_env, return_type)))
+        Pi(type_map, readback(evaluate(telescope_env, return_type)))
 
       case ValueFn(telescope: Telescope, body: Exp) =>
         var type_map: ListMap[String, Exp] = ListMap()
         var telescope_env = telescope.env
         telescope.type_map.foreach {
           case (name, t) =>
-            val t_value = eval(telescope_env, t)
+            val t_value = evaluate(telescope_env, t)
             telescope_env = telescope_env.ext(name, t_value, NeutralVar(name))
             type_map = type_map + (name -> readback(t_value))
         }
-        Fn(type_map, readback(eval(telescope_env, body)))
+        Fn(type_map, readback(evaluate(telescope_env, body)))
 
       case ValueFnCase(cases) =>
         FnCase(cases.map {
@@ -46,11 +46,11 @@ object readback {
             var telescope_env = telescope.env
             telescope.type_map.foreach {
               case (name, t) =>
-                val t_value = eval(telescope_env, t)
+                val t_value = evaluate(telescope_env, t)
                 telescope_env = telescope_env.ext(name, t_value, NeutralVar(name))
                 type_map = type_map + (name -> readback(t_value))
             }
-            (type_map, readback(eval(telescope_env, body)))
+            (type_map, readback(evaluate(telescope_env, body)))
         })
 
       case ValueCl(defined, telescope: Telescope) =>
@@ -58,7 +58,7 @@ object readback {
         var telescope_env = telescope.env
         telescope.type_map.foreach {
           case (name, t) =>
-            val t_value = eval(telescope_env, t)
+            val t_value = evaluate(telescope_env, t)
             telescope_env = telescope_env.ext(name, t_value, NeutralVar(name))
             type_map = type_map + (name -> readback(t_value))
         }
@@ -74,11 +74,11 @@ object readback {
       case NeutralVar(name: String) =>
         Var(name)
 
-      case NeutralAp(target: Neutral, arg_list: List[Value]) =>
-        Ap(readback(target), arg_list.map(readback))
+      case NeutralAp(target: Neutral, args: List[Value]) =>
+        Ap(readback(target), args.map(readback))
 
-      case NeutralDot(target: Neutral, field: String) =>
-        Dot(readback(target), field)
+      case NeutralDot(target: Neutral, field_name: String) =>
+        Dot(readback(target), field_name)
     }
   }
 
