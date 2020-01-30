@@ -108,6 +108,7 @@ object check {
                   local_env = local_env.ext(fn_arg_name, fn_arg_type_value, unique_var)
                   telescope_env = telescope_env.ext(pi_arg_name, pi_arg_type_value, unique_var)
               }
+              check(local_env, body, evaluate(telescope_env, return_type))
 
             case _ =>
               throw ErrorReport(List(
@@ -140,6 +141,7 @@ object check {
                       local_env = local_env.ext(fn_arg_name, fn_arg_type_value, unique_var)
                       telescope_env = telescope_env.ext(pi_arg_name, pi_arg_type_value, unique_var)
                   }
+                  check(local_env, body, evaluate(telescope_env, return_type))
               }
 
             case _ =>
